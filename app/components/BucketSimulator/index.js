@@ -107,19 +107,32 @@ class BucketSimulator extends React.Component {
   //---------------------------------
 
   render() {
+    let containerHeight = 250;
+    if((this.state.bigBucketSize * 5)>250){
+      containerHeight = this.state.bigBucketSize * 5;
+    }
+    const bucketContainerStyleObj = {
+      position: 'relative',
+      height: containerHeight,
+      marginBottom: 50,
+      marginTop: 50
+    }
+
     return (
       <div className="col-md-8 col-md-offset-3">
-        <div className="row">
+        <div style={bucketContainerStyleObj} className="row bucket-container">
           <BucketDisplay
             size={this.state.bigBucketSize}
             contains={this.state.bigBucketContains}
+            leftAlign={0}
           />
           <BucketDisplay
             size={this.state.smallBucketSize}
             contains={this.state.smallBucketContains}
+            leftAlign={380}
           />
         </div>
-        <div className="row">
+        <div className="row bucket-form-container">
           <SimulationForm
             bigBucketSize={this.state.bigBucketSize}
             smallBucketSize={this.state.smallBucketSize}
@@ -179,11 +192,15 @@ class SimulationForm extends React.Component {
   //---------------------------------
 
   render() {
+    const buttonRowStyleObj = {
+      marginTop: 20
+    }
+
     return (
       <form>
         <div className="row">
           <div className="col-md-4 text-center">
-            <label for="basic-url">Big Bucket</label>
+            <label>Big Bucket Capacity</label>
             <div className="input-group input-group-lg">
               <input
                 className="form-control"
@@ -195,7 +212,7 @@ class SimulationForm extends React.Component {
             </div>
           </div>
           <div className="col-md-4 text-center">
-            <label for="basic-url">Small Bucket</label>
+            <label>Small Bucket Capacity</label>
             <div className="input-group input-group-lg">
               <input
                 className="form-control"
@@ -207,7 +224,7 @@ class SimulationForm extends React.Component {
             </div>
           </div>
           <div className="col-md-4 text-center">
-            <label for="basic-url">Target Amount</label>
+            <label>Target Amount</label>
             <div className="input-group input-group-lg">
               <input
                 className="form-control"
@@ -219,7 +236,7 @@ class SimulationForm extends React.Component {
             </div>
           </div>
         </div>
-        <div className="row">
+        <div style={buttonRowStyleObj} className="row">
           <div className="col-md-12 text-center">
             <a className="btn btn-lg btn-primary" onClick={this.runSimulation} role="button">GO</a>
           </div>
@@ -234,14 +251,25 @@ class BucketDisplay extends React.Component {
     super(props);
   }
   render(){
-    const height = this.props.size * 10;
-    const styleObj = {
-      width: '200px',
-      height: `${height}px`
+    const bucketHeight = this.props.size * 5;
+    const waterHeight = 2 * 10;
+    const bucketDisplayStyleObj = {
+      position: 'absolute',
+      bottom: 20,
+      left: this.props.leftAlign
+    }
+    const bucketStyleObj = {
+      height: bucketHeight,
+      width: '50%',
+      border: '1px solid #888',
+      borderTop: 'none',
+      borderRadius: 5,
+      margin: 'auto',
+      background: `linear-gradient(0deg, #00A0FC ${waterHeight-5}px, #EEE ${waterHeight+5}px)`
     }
     return(
-      <div className="col-md-6 text-center bucket-container">
-      X
+      <div className="col-md-6 text-center bucket-display" style={bucketDisplayStyleObj}>
+        <div className="bucket text-center" style={bucketStyleObj}></div>
       </div>
     );
   }
