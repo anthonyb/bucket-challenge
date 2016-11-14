@@ -11,7 +11,9 @@ class BucketSimulator extends React.Component {
       targetAmount: 4,
       bigBucketContains: 0,
       smallBucketContains: 0,
-      steps: []
+      bucketDisplayMultiplier: 5,
+      steps: [],
+      targetStepHash: {}
     };
 
     this.updateBigBucketSize = this.updateBigBucketSize.bind(this);
@@ -72,6 +74,47 @@ class BucketSimulator extends React.Component {
   //---------------------------------
 
   validateBucketSizes(){
+
+    const bBS = this.state.bigBucketSize;
+    const sBS = this.state.smallBucketSize;
+    const tA = this.state.targetAmount;
+
+    //Catch user input error first
+
+    if(sBS >= bBS){
+      return false;
+      //can't do that!
+    }
+
+    if(tA > bBS){
+      return false;
+      //can't do that!
+    }
+
+    //Now filter out simple logic blocks
+
+    if((bBS % sBS) == 0){
+      if(tA < sBS){
+        return false;
+        //can't do that! - even divisor can't yield less than the small bucket
+      }
+    }
+
+    if(isEven(bBS) && isEven(sBS)){
+      if(isOdd(tA)){
+        return false;
+        //can't do that! - two even sized buckets can't make an odd amount
+      }
+    }
+
+    //Possible: mod, mod - sm, lg - (mod - sm)
+
+
+
+    if(newTargetAmount < this.state.bigBucketSize){
+
+    }
+
     if(newTargetAmount < this.state.bigBucketSize){
 
     }else if(newTargetAmount == this.state.bigBucketSize){
@@ -83,43 +126,86 @@ class BucketSimulator extends React.Component {
     }else if(newTargetAmount < this.state.smallBucketSize){
       //can't do that!
     }
+
+    return true;
   }
 
   //---------------------------------
 
   runSimulation(){
     if(validateBucketSizes() == true){
-      return runSteps(
-        this.state.bigBucketSize,
-        this.state.smallBucketSize,
-        this.state.targetAmount
-      )
+      this.state.simulationState = "simuating";
+      //prime the recursion and then run it.
+      runSteps(this.state.bigBucketSize, 0, [[this.state.bigBucketSize,0]]);
+      runSteps(0, this.state.smallBucketSize, [[0,this.state.smallBucketSize]]);
     }
     return false;
   }
 
   //---------------------------------
 
-  runSteps(bigBucketSize, smallBucketSize, targetAmount){
-    return true;
+  runSteps(bigBucketContains, smallBucketContains, steps){
+    const bbS = this.state.bigBucketSize;
+    const sbS = this.state.smallBucketSize;
+
+    const bbSpace = bbS - bigBucketContains;
+    let sbSpace = sbS - smallBucketContains;
+
+    //try the right op
+    if (bigBucketContains > 0){
+      let newSteps = []
+      if (sbSpace == 0){
+        // dump and then do it
+        smallBucketContains = 0
+        newSteps.push([bigBucketContains,smallBucketContains])
+        sbSpace = sbS - smallBucketContains;
+      }
+
+      if(bigBucketContains > sbSpace){
+        bigBucketContains -= sbSpace;
+        smallBucketContains = sbS;
+        newSteps.push([bigBucketContains,smallBucketContains])
+      }
+    }
+
+
+
+    //try the left op
+
+
+    let rightOpYield = (bigBucketContains - smallBucketContains)
+    let leftOpYield = abs(smallBucketContains - bigBucketContains);
+  }
+
+  //---------------------------------
+  //utilities for easy reability
+  isEven(n) {
+    return n % 2 == 0;
+  }
+
+  //---------------------------------
+
+  isOdd(n) {
+    return Math.abs(n % 2) == 1;
   }
 
   //---------------------------------
 
   render() {
-    let containerHeight = 250;
-    if((this.state.bigBucketSize * 5)>250){
-      containerHeight = this.state.bigBucketSize * 5;
+    let containerHeight = 280;
+    const displayMultiplier = 5;
+    if((this.state.bigBucketSize * displayMultiplier)>280){
+      containerHeight = this.state.bigBucketSize * displayMultiplier;
     }
     const bucketContainerStyleObj = {
       position: 'relative',
       height: containerHeight,
-      marginBottom: 50,
-      marginTop: 50
+      marginBottom: 30,
+      marginTop: 40
     }
 
     return (
-      <div className="col-md-8 col-md-offset-3">
+      <div className="col-md-8 col-md-offset-2">
         <div style={bucketContainerStyleObj} className="row bucket-container">
           <BucketDisplay
             size={this.state.bigBucketSize}
@@ -251,25 +337,34 @@ class BucketDisplay extends React.Component {
     super(props);
   }
   render(){
-    const bucketHeight = this.props.size * 5;
-    const waterHeight = 2 * 10;
-    const bucketDisplayStyleObj = {
+    const displayMultiplier = 5;
+    const bucketHeight = this.props.size;
+    const bucketHeightDisplay = bucketHeight * displayMultiplier;
+    const waterHeight = this.props.contains;
+    const waterHeightDisplay = waterHeight * displayMultiplier;
+    const bucketDisplayStyle = {
       position: 'absolute',
       bottom: 20,
       left: this.props.leftAlign
     }
-    const bucketStyleObj = {
-      height: bucketHeight,
+    const bucketStyle = {
+      height: bucketHeightDisplay,
       width: '50%',
       border: '1px solid #888',
       borderTop: 'none',
       borderRadius: 5,
       margin: 'auto',
-      background: `linear-gradient(0deg, #00A0FC ${waterHeight-5}px, #EEE ${waterHeight+5}px)`
+      background: `linear-gradient(0deg, #00A0FC ${waterHeightDisplay-3}px, #EEE ${waterHeightDisplay+3}px)`
     }
+
+    const currentAmountStyle = {
+      fontSize: 20
+    }
+
     return(
-      <div className="col-md-6 text-center bucket-display" style={bucketDisplayStyleObj}>
-        <div className="bucket text-center" style={bucketStyleObj}></div>
+      <div className="col-md-6 text-center bucket-display" style={bucketDisplayStyle}>
+        <div className="bucket text-center" style={bucketStyle}></div>
+        <span style={currentAmountStyle}>{waterHeight}</span>
       </div>
     );
   }
