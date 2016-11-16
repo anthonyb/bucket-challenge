@@ -4,15 +4,6 @@
   border: 1px solid blue;
 }
 
-.bucket{
-  border:1px solid #666;
-}
-
-.water{
-  width: 100%;
-  background: blue;
-}
-
 .form-control{
   text-align: center;
   font-size: 30px;
