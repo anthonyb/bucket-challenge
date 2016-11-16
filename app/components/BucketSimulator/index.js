@@ -9,8 +9,8 @@ class BucketSimulator extends React.Component {
     super(props);
     this.state = {
       simulationState: "waiting",
-      bigBucketSize: 5,
-      smallBucketSize: 3,
+      bigBucketSize: 12,
+      smallBucketSize: 7,
       targetAmount: 4,
       bigBucketContains: 0,
       smallBucketContains: 0,
@@ -196,7 +196,7 @@ class BucketSimulator extends React.Component {
     }
 
     if(bBS < 3){
-      console.log(`Large bucket has to be at least 3`);
+      console.log(`Big bucket has to be at least 3`);
       return false;
       //can't do that!
     }
@@ -257,17 +257,17 @@ class BucketSimulator extends React.Component {
     }
 
     return (
-      <div className="col-md-8 col-md-offset-2">
+      <div className="col-xs-8 col-xs-offset-2">
         <div style={bucketContainerStyleObj} className="row bucket-container">
           <BucketDisplay
             size={this.state.bigBucketSize}
             contains={this.state.bigBucketContains}
-            leftAlign={0}
+            leftAlign={'0%'}
           />
           <BucketDisplay
             size={this.state.smallBucketSize}
             contains={this.state.smallBucketContains}
-            leftAlign={380}
+            leftAlign={'50%'}
           />
         </div>
         <div className="row bucket-form-container">

@@ -30,7 +30,7 @@ class BucketDisplay extends React.Component {
     }
 
     return(
-      <div className="col-md-6 text-center bucket-display" style={bucketDisplayStyle}>
+      <div className="col-xs-6 text-center bucket-display" style={bucketDisplayStyle}>
         <div className="bucket text-center" style={bucketStyle}></div>
         <span style={currentAmountStyle}>{waterHeight}</span>
       </div>

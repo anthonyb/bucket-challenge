@@ -49,7 +49,7 @@ class SimulationForm extends React.Component {
     return (
       <form>
         <div className="row">
-          <div className="col-md-4 text-center">
+          <div className="col-xs-4 text-center">
             <label>Big Bucket Capacity</label>
             <div className="input-group input-group-lg">
               <input
@@ -61,7 +61,7 @@ class SimulationForm extends React.Component {
               />
             </div>
           </div>
-          <div className="col-md-4 text-center">
+          <div className="col-xs-4 text-center">
             <label>Small Bucket Capacity</label>
             <div className="input-group input-group-lg">
               <input
@@ -73,7 +73,7 @@ class SimulationForm extends React.Component {
               />
             </div>
           </div>
-          <div className="col-md-4 text-center">
+          <div className="col-xs-4 text-center">
             <label>Target Amount</label>
             <div className="input-group input-group-lg">
               <input
@@ -87,7 +87,7 @@ class SimulationForm extends React.Component {
           </div>
         </div>
         <div style={buttonRowStyleObj} className="row">
-          <div className="col-md-12 text-center">
+          <div className="col-xs-12 text-center">
             <a className="btn btn-lg btn-primary" onClick={this.runSimulation} role="button">GO</a>
           </div>
         </div>
