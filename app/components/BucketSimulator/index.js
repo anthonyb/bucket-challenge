@@ -244,9 +244,9 @@ class BucketSimulator extends React.Component {
   //---------------------------------
 
   render() {
-    let containerHeight = 280;
+    let containerHeight = 180;
     const displayMultiplier = 5;
-    if((this.state.bigBucketSize * displayMultiplier)>280){
+    if((this.state.bigBucketSize * displayMultiplier)>180){
       containerHeight = this.state.bigBucketSize * displayMultiplier;
     }
     const bucketContainerStyleObj = {

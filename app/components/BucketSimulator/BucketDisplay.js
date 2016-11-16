@@ -21,6 +21,8 @@ class BucketDisplay extends React.Component {
       border: '1px solid #888',
       borderTop: 'none',
       borderRadius: 5,
+      borderTopLeftRadius: 0,
+      borderTopRightRadius: 0,
       margin: 'auto',
       background: `linear-gradient(0deg, #00A0FC ${waterHeightDisplay-3}px, #EEE ${waterHeightDisplay+3}px)`
     }
