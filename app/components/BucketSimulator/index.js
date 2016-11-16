@@ -20,6 +20,7 @@ class BucketSimulator extends React.Component {
     this.updateSmallBucketSize = this.updateSmallBucketSize.bind(this);
     this.updateTargetAmount = this.updateTargetAmount.bind(this);
     this.runSimulation = this.runSimulation.bind(this);
+    this.validateBucketSizes = this.validateBucketSizes.bind(this);
   }
 
   //---------------------------------
@@ -79,6 +80,18 @@ class BucketSimulator extends React.Component {
     const sBS = this.state.smallBucketSize;
     const tA = this.state.targetAmount;
 
+    //---------------------------------
+    //utilities for easy reability
+    const isEven = function(n) {
+      return n % 2 == 0;
+    }
+
+    //---------------------------------
+
+    const isOdd = function(n) {
+      return Math.abs(n % 2) == 1;
+    }
+
     //Catch user input error first
 
     if(sBS >= bBS){
@@ -109,21 +122,19 @@ class BucketSimulator extends React.Component {
 
     //Possible: mod, mod - sm, lg - (mod - sm)
 
-
-
-    if(newTargetAmount < this.state.bigBucketSize){
+    if(tA < bBS){
 
     }
 
-    if(newTargetAmount < this.state.bigBucketSize){
+    if(tA < bBS){
 
-    }else if(newTargetAmount == this.state.bigBucketSize){
+    }else if(tA == bBS){
       //this makes no sense
-    }else if(newTargetAmount == this.state.smallBucketSize){
+    }else if(tA == sBS){
       //this makes no sense
-    }else if(newTargetAmount > this.state.bigBucketSize){
+    }else if(tA > bBS){
       //can't do that!
-    }else if(newTargetAmount < this.state.smallBucketSize){
+    }else if(tA < sBS){
       //can't do that!
     }
 
@@ -133,61 +144,120 @@ class BucketSimulator extends React.Component {
   //---------------------------------
 
   runSimulation(){
-    if(validateBucketSizes() == true){
+    let leftCycleResults = false;
+    let rightCycleResults = false;
+    if(this.validateBucketSizes() == true){
       this.state.simulationState = "simuating";
-      //prime the recursion and then run it.
-      runSteps(this.state.bigBucketSize, 0, [[this.state.bigBucketSize,0]]);
-      runSteps(0, this.state.smallBucketSize, [[0,this.state.smallBucketSize]]);
+      leftCycleResults = this.runCycleLeft(this.state.bigBucketSize, 0);
+      //rightCycleResults = runCycleRight(0, this.state.smallBucketSize);
     }
+
+    console.log(leftCycleResults);
+    //animate here...
+
+    //this.setState({bigBucketContains: bigC});
+    //this.setState({smallBucketContains: smallC});
+    //console.log(this.state)
+
+    //
+
+
     return false;
   }
 
   //---------------------------------
 
-  runSteps(bigBucketContains, smallBucketContains, steps){
+
+  runCycleLeft(bigBucketContains, smallBucketContains){
+    const initBigBucket = bigBucketContains;
+    const initSmallBucket = smallBucketContains;
+
     const bbS = this.state.bigBucketSize;
     const sbS = this.state.smallBucketSize;
+    const targetAmount = this.state.targetAmount;
 
-    const bbSpace = bbS - bigBucketContains;
-    let sbSpace = sbS - smallBucketContains;
+    const stateStack = [[bigBucketContains,smallBucketContains]];
 
-    //try the right op
-    if (bigBucketContains > 0){
-      let newSteps = []
-      if (sbSpace == 0){
-        // dump and then do it
-        smallBucketContains = 0
-        newSteps.push([bigBucketContains,smallBucketContains])
-        sbSpace = sbS - smallBucketContains;
+    let smallC = smallBucketContains;
+    let bigC = bigBucketContains;
+
+    let sbSpace = sbS - smallC;
+    let bbSpace = bbS - bigC;
+
+    let loopCount = 0;
+    const loopKill = 70; //if we can't solve it by here, something bad happened
+
+    console.log(`BIG BREAK::${initBigBucket}, SMALL BREAK::${initSmallBucket}`);
+    //Continue looping over the cycle of fill, pour and repeat until we loop back
+    while(true){
+      console.log(`BIG::${bigC}, SMALL::${smallC}`);
+      if(bigC >= sbSpace){
+        console.log(`Pouring ${sbSpace} from big to small`);
+        bigC -= sbSpace;
+        smallC += sbSpace;
+      }else{
+        console.log(`Pouring ${bigC} from big to small`);
+        smallC = bigC;
+        bigC = 0;
       }
 
-      if(bigBucketContains > sbSpace){
-        bigBucketContains -= sbSpace;
-        smallBucketContains = sbS;
-        newSteps.push([bigBucketContains,smallBucketContains])
+      //push onto the state stack here
+      stateStack.push([bigC,smallC])
+      //
+
+      console.log(`BIG::${bigC}, SMALL::${smallC}`);
+
+      sbSpace = sbS - smallC;
+      bbSpace = bbS - bigC;
+
+      if(true){
+        //check to see if we have met the goal here.
+        if(smallC == targetAmount){
+          console.log("MISSION COMPLETE!");
+          console.log(`BIG::${bigC}, SMALL::${smallC}`);
+          stateStack.push([0,smallC]);
+          return stateStack;
+        }
+        if(bigC == targetAmount){
+          console.log("MISSION COMPLETE!");
+          console.log(`BIG::${bigC}, SMALL::${smallC}`);
+          stateStack.push([bigC,0]);
+          return stateStack;
+        }
       }
-    }
 
+      //if the small bucket is full, empty
+      if(sbSpace == 0){
+        console.log(`Emptying small`);
+        smallC = 0;
+        sbSpace = sbS;
+        stateStack.push([bigC,smallC]);
+      }
 
+      //if the big bucket is empty, fill it up
+      if(bigC == 0){
+        console.log(`Filling big`);
+        bigC = bbS;
+        bbSpace = 0;
+        stateStack.push([bigC,smallC]);
+      }
 
-    //try the left op
+      if((bigC == initBigBucket) && (smallC == initSmallBucket)){
+        console.log(`BIG::${bigC}, SMALL::${smallC}`);
+        console.log(`Failed to make the required ${targetAmount}`);
+        //we have made a loop. All possibilities exhausted
+        //this is a failure :(
+        return false;
+      }
 
+      if(++loopCount >= loopKill){
+        console.log(`Kill it...`);
+        return false;
+      }
 
-    let rightOpYield = (bigBucketContains - smallBucketContains)
-    let leftOpYield = abs(smallBucketContains - bigBucketContains);
-  }
+    }// end while loop
 
-  //---------------------------------
-  //utilities for easy reability
-  isEven(n) {
-    return n % 2 == 0;
-  }
-
-  //---------------------------------
-
-  isOdd(n) {
-    return Math.abs(n % 2) == 1;
-  }
+  } //end runCycleLeft
 
   //---------------------------------
 
@@ -226,6 +296,7 @@ class BucketSimulator extends React.Component {
             updateBigBucketSize={this.updateBigBucketSize}
             updateSmallBucketSize={this.updateSmallBucketSize}
             updateTargetAmount={this.updateTargetAmount}
+            runSimulation={this.runSimulation}
           />
         </div>
       </div>
@@ -263,7 +334,6 @@ class SimulationForm extends React.Component {
   //---------------------------------
 
   updateTargetAmount() {
-    console.log("updateTargetAmount1");
     this.props.updateTargetAmount(
       this.refs.targetAmount.value
     );
