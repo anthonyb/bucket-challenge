@@ -206,6 +206,8 @@ class BucketSimulator extends React.Component {
     const smallBucketSize = this.state.smallBucketSize;
     const targetAmount = this.state.targetAmount;
 
+    let error = null;
+
     //---------------------------------
     //utilities for easy reability
     const isEven = function(n) {
@@ -222,7 +224,7 @@ class BucketSimulator extends React.Component {
     //Use short circuit style error handling
 
     if(smallBucketSize < 2){
-      let error = `Small bucket has to be at least 2`;
+      error = `Small bucket has to be at least 2`;
       console.log(error);
       this.setState({error: error});
       return false;
@@ -230,7 +232,7 @@ class BucketSimulator extends React.Component {
     }
 
     if(bigBucketSize < 3){
-      let error = `Big bucket has to be at least 3`;
+      error = `Big bucket has to be at least 3`;
       console.log(error);
       this.setState({error: error});
       return false;
@@ -238,7 +240,7 @@ class BucketSimulator extends React.Component {
     }
 
     if(smallBucketSize >= bigBucketSize){
-      let error = `Small bucket has to be smaller than the big bucket`;
+      error = `Small bucket has to be smaller than the big bucket`;
       console.log(error);
       this.setState({error: error});
       return false;
@@ -246,7 +248,7 @@ class BucketSimulator extends React.Component {
     }
 
     if(targetAmount >= bigBucketSize){
-      let error = `Target needs to be less than the big bucket`;
+      error = `Target needs to be less than the big bucket`;
       console.log(error);
       this.setState({error: error});
       return false;
@@ -254,7 +256,7 @@ class BucketSimulator extends React.Component {
     }
 
     if(targetAmount == smallBucketSize){
-      let error = `Target needs to be a different size than the small bucket`;
+      error = `Target needs to be a different size than the small bucket`;
       console.log(error);
       this.setState({error: error});
       return false;
@@ -264,14 +266,14 @@ class BucketSimulator extends React.Component {
 
     if((bigBucketSize % smallBucketSize) == 0){
       if(targetAmount < smallBucketSize){
-        let error = `Sorry! Even divisor can't yield anything less than the small bucket`;
+        error = `Sorry! Even divisor can't yield anything less than the small bucket`;
         console.log(error);
         this.setState({error: error});
         return false;
       }
 
       if((smallBucketSize % targetAmount != 0) && (targetAmount % smallBucketSize != 0)){
-        let error = `Sorry! Even divisor can't yield anything that isn't a multiple of the small bucket`;
+        error = `Sorry! Even divisor can't yield anything that isn't a multiple of the small bucket`;
         console.log(error);
         this.setState({error: error});
         return false;
@@ -280,7 +282,7 @@ class BucketSimulator extends React.Component {
 
     if(isEven(bigBucketSize) && isEven(smallBucketSize)){
       if(isOdd(targetAmount)){
-        let error = `Sorry! Two even sized buckets can't make an odd amount`;
+        error = `Sorry! Two even sized buckets can't make an odd amount`;
         console.log(error);
         this.setState({error: error});
         return false;

@@ -1,14 +1,13 @@
 {
   "name": "bucket-challenge",
   "version": "0.1.0",
-  "description": "A boilerplate for running a Webpack workflow in Node express",
+  "description": "Bucket Challenge Coding Test",
   "main": "server.js",
   "keywords": [
     "express",
     "webpack",
     "node"
   ],
-  "homepage": "https://github.com/christianalfoni/webpack-express-boilerplate",
   "scripts": {
     "test": "",
     "start": "node server",
