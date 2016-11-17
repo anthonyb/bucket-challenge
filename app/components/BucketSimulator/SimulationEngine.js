@@ -26,7 +26,7 @@ class SimulationEngine{
     let sbSpace = smallBucketSize - smallContains;
 
     let loopCount = 0;
-    const loopKill = 100; //if we can't solve it by here, something bad happened
+    const loopKill = 200; //if we can't solve it by here, something bad happened
 
     //Continue looping over the cycle of fill, pour and repeat until we loop back
     while(true){
@@ -116,7 +116,7 @@ class SimulationEngine{
     let bbSpace = bigBucketSize - bigContains;
 
     let loopCount = 0;
-    const loopKill = 100; //if we can't solve it by here, something bad happened
+    const loopKill = 200; //if we can't solve it by here, something bad happened
 
     //Continue looping over the cycle of fill, pour and repeat until we loop back
     while(true){

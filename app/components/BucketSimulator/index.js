@@ -3,6 +3,8 @@ import styles from './BucketSimulator.css';
 import SimulationEngine from './SimulationEngine'
 import SimulationForm from './SimulationForm'
 import BucketDisplay from './BucketDisplay'
+import StepsDisplay from './StepsDisplay'
+import ErrorDisplay from './ErrorDisplay'
 
 class BucketSimulator extends React.Component {
   constructor(props) {
@@ -16,7 +18,7 @@ class BucketSimulator extends React.Component {
       smallBucketContains: 0,
       bucketDisplayMultiplier: 5,
       steps: [],
-      targetStepHash: {}
+      error: null
     };
 
     this.updateBigBucketSize = this.updateBigBucketSize.bind(this);
@@ -94,6 +96,9 @@ class BucketSimulator extends React.Component {
       return;
     }
 
+    this.setState({steps: []});
+    this.setState({error: null});
+
     let leftCycleResults = null;
     let rightCycleResults = null;
 
@@ -131,9 +136,28 @@ class BucketSimulator extends React.Component {
         }
       }
 
-      console.log(shortestCycle);
-      console.log(shortestCycleLength);
+      this.animateResults(shortestCycle).then(() =>{
+        //once done, set it back to waiting and return true
+        this.state.simulationState = "waiting";
+        return true;
+      });
 
+    }else{
+      let error = `Hmm, for some reason we couldn't make ${this.state.targetAmount}`;
+      console.log(error);
+      this.setState({error: error});
+      this.state.simulationState = "waiting";
+      return false;
+    }
+  }
+
+  //---------------------------------
+
+  animateResults(shortestCycle){
+
+    let shortestCycleLength = shortestCycle.length;
+
+    return new Promise((resolve) => {
 
       const sleep = function(time) {
         return new Promise((resolve) => setTimeout(resolve, time));
@@ -142,38 +166,45 @@ class BucketSimulator extends React.Component {
       //should be viewable, but not tedious
       const frameDelay = 5000/shortestCycleLength;
 
+      //reset the animation
+      this.setState({bigBucketContains: 0});
+      this.setState({smallBucketContains: 0});
+
       for(let index in shortestCycle){
         let cycle = shortestCycle[index];
         let delay = frameDelay * index;
+        if(index==0){
+          delay = 250;
+        }
         sleep(delay).then(() => {
           let newBigContains = cycle[0];
           let newSmallContains = cycle[1];
+
+          this.state.steps.push([newBigContains,newSmallContains]);
+          this.setState({steps: this.state.steps});
           this.setState({bigBucketContains: newBigContains});
           this.setState({smallBucketContains: newSmallContains});
 
-          //once done, set it back to waiting and return true
-          if(index==shortestCycle.length-1){
-            this.state.simulationState = "waiting";
-            return true;
+          if(index>=shortestCycle.length-1){
+            let success =
+              `Success! We have yielded ${this.state.targetAmount}
+              units of water in only ${shortestCycleLength} Steps!`;
+            console.log(success);
+            this.setState({error: success});
+            resolve();
           }
         });
       }
-
-      //this shouldn't happen, but its a catchall for failed animation
-      return true;
-    }else{
-      this.state.simulationState = "waiting";
-      return false;
-    }
+    });
   }
 
   //---------------------------------
 
   validateBucketSizes(){
 
-    const bBS = this.state.bigBucketSize;
-    const sBS = this.state.smallBucketSize;
-    const tA = this.state.targetAmount;
+    const bigBucketSize = this.state.bigBucketSize;
+    const smallBucketSize = this.state.smallBucketSize;
+    const targetAmount = this.state.targetAmount;
 
     //---------------------------------
     //utilities for easy reability
@@ -188,52 +219,70 @@ class BucketSimulator extends React.Component {
     }
 
     //Catch user input error first
+    //Use short circuit style error handling
 
-    if(sBS < 2){
-      console.log(`Small bucket has to be at least 2`);
+    if(smallBucketSize < 2){
+      let error = `Small bucket has to be at least 2`;
+      console.log(error);
+      this.setState({error: error});
       return false;
       //can't do that!
     }
 
-    if(bBS < 3){
-      console.log(`Big bucket has to be at least 3`);
+    if(bigBucketSize < 3){
+      let error = `Big bucket has to be at least 3`;
+      console.log(error);
+      this.setState({error: error});
       return false;
       //can't do that!
     }
 
-    if(sBS >= bBS){
-      console.log(`Small bucket has to be smaller than the big bucket`);
+    if(smallBucketSize >= bigBucketSize){
+      let error = `Small bucket has to be smaller than the big bucket`;
+      console.log(error);
+      this.setState({error: error});
       return false;
       //can't do that!
     }
 
-    if(tA >= bBS){
-      console.log(`Target needs to be less than the big bucket`);
+    if(targetAmount >= bigBucketSize){
+      let error = `Target needs to be less than the big bucket`;
+      console.log(error);
+      this.setState({error: error});
       return false;
       //can't do that!
     }
 
-    if(tA == sBS){
-      console.log(`Target needs to be a different size than the small bucket`);
+    if(targetAmount == smallBucketSize){
+      let error = `Target needs to be a different size than the small bucket`;
+      console.log(error);
+      this.setState({error: error});
       return false;
     }
 
     //Now filter out simple logic blocks
 
-    if((bBS % sBS) == 0){
-      if(tA < sBS){
-        console.log(`Sorry! Even divisor can't yield anything less than the small bucket`);
+    if((bigBucketSize % smallBucketSize) == 0){
+      if(targetAmount < smallBucketSize){
+        let error = `Sorry! Even divisor can't yield anything less than the small bucket`;
+        console.log(error);
+        this.setState({error: error});
         return false;
       }
-      if(sbS % tA != 0){
-        console.log(`Sorry! Even divisor can't yield anything that isn't a multiple of the small bucket`);
+
+      if((smallBucketSize % targetAmount != 0) && (targetAmount % smallBucketSize != 0)){
+        let error = `Sorry! Even divisor can't yield anything that isn't a multiple of the small bucket`;
+        console.log(error);
+        this.setState({error: error});
         return false;
       }
     }
 
-    if(isEven(bBS) && isEven(sBS)){
-      if(isOdd(tA)){
-        console.log(`Sorry! Can't do that! - two even sized buckets can't make an odd amount`);
+    if(isEven(bigBucketSize) && isEven(smallBucketSize)){
+      if(isOdd(targetAmount)){
+        let error = `Sorry! Two even sized buckets can't make an odd amount`;
+        console.log(error);
+        this.setState({error: error});
         return false;
       }
     }
@@ -264,12 +313,17 @@ class BucketSimulator extends React.Component {
             contains={this.state.bigBucketContains}
             leftAlign={'0%'}
           />
+          <StepsDisplay
+            leftAlign={'42%'}
+            steps={this.state.steps}
+          />
           <BucketDisplay
             size={this.state.smallBucketSize}
             contains={this.state.smallBucketContains}
             leftAlign={'50%'}
           />
         </div>
+        <ErrorDisplay error={this.state.error} />
         <div className="row bucket-form-container">
           <SimulationForm
             bigBucketSize={this.state.bigBucketSize}
