@@ -6,17 +6,19 @@ class StepsDisplay extends React.Component {
   }
   render(){
     const stepsDisplayStyle = {
-      height: 220,
+      height: 180,
       border: '1px solid #999',
       color: '#666',
       position: 'absolute',
-      top: -20,
+      bottom: 45,
       left: this.props.leftAlign,
       fontSize: 20,
       overflow: 'scroll'
     }
 
     let stepList = []
+
+    //console.log(this.props.steps);
 
     for(let index in this.props.steps){
       let step = this.props.steps[index];

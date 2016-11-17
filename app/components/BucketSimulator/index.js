@@ -135,6 +135,8 @@ class BucketSimulator extends React.Component {
         }
       }
 
+      console.log(shortestCycle);
+
       this.animateResults(shortestCycle).then(() =>{
         //once done, set it back to waiting and return true
         this.state.simulationState = "waiting";
@@ -169,18 +171,23 @@ class BucketSimulator extends React.Component {
       this.setState({bigBucketContains: 0});
       this.setState({smallBucketContains: 0});
 
+      console.log("STEPS");
+      console.log(this.state.steps);
+
       for(let index in shortestCycle){
         let cycle = shortestCycle[index];
+        let newBigContains = cycle[0];
+        let newSmallContains = cycle[1];
         let delay = frameDelay * index;
-        if(index==0){
-          delay = 250;
-        }
+        
         sleep(delay).then(() => {
-          let newBigContains = cycle[0];
-          let newSmallContains = cycle[1];
+          console.log("STEPS");
+          console.log([newBigContains,newSmallContains]);
 
-          this.state.steps.push([newBigContains,newSmallContains]);
-          this.setState({steps: this.state.steps});
+          let newSteps = this.state.steps.slice();
+          newSteps.push([newBigContains,newSmallContains]);
+
+          this.setState({steps: newSteps});
           this.setState({bigBucketContains: newBigContains});
           this.setState({smallBucketContains: newSmallContains});
 
@@ -294,9 +301,15 @@ class BucketSimulator extends React.Component {
   render() {
     let containerHeight = 180;
     const displayMultiplier = 5;
-    if((this.state.bigBucketSize * displayMultiplier)>180){
+
+    if((this.state.bigBucketSize * displayMultiplier)>containerHeight){
       containerHeight = this.state.bigBucketSize * displayMultiplier;
     }
+
+    if((this.state.smallBucketSize * displayMultiplier)>containerHeight){
+      containerHeight = this.state.smallBucketSize * displayMultiplier;
+    }
+
     const bucketContainerStyleObj = {
       position: 'relative',
       height: containerHeight,
