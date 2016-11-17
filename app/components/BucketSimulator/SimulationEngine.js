@@ -5,6 +5,9 @@ class SimulationEngine{
     this._targetAmount = targetAmount;
   }
 
+  //TODO: These two methods can and should be DRY'd up and merged.
+  //I'm going to leave it like this so its easier to examine and explain.
+
   //---------------------------------
 
   runCycleLeft(){

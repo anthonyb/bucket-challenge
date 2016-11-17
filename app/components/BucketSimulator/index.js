@@ -171,19 +171,13 @@ class BucketSimulator extends React.Component {
       this.setState({bigBucketContains: 0});
       this.setState({smallBucketContains: 0});
 
-      console.log("STEPS");
-      console.log(this.state.steps);
-
       for(let index in shortestCycle){
         let cycle = shortestCycle[index];
         let newBigContains = cycle[0];
         let newSmallContains = cycle[1];
         let delay = frameDelay * index;
-        
-        sleep(delay).then(() => {
-          console.log("STEPS");
-          console.log([newBigContains,newSmallContains]);
 
+        sleep(delay).then(() => {
           let newSteps = this.state.steps.slice();
           newSteps.push([newBigContains,newSmallContains]);
 

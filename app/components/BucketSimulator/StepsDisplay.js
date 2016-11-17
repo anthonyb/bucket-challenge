@@ -16,9 +16,7 @@ class StepsDisplay extends React.Component {
       overflow: 'scroll'
     }
 
-    let stepList = []
-
-    //console.log(this.props.steps);
+    let stepList = [];
 
     for(let index in this.props.steps){
       let step = this.props.steps[index];
