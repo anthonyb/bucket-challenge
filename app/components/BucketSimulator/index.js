@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './BucketSimulator.css';
 import SimulationEngine from './SimulationEngine'
 import SimulationForm from './SimulationForm'
 import BucketDisplay from './BucketDisplay'

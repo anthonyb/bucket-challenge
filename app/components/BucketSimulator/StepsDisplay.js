@@ -10,7 +10,7 @@ class StepsDisplay extends React.Component {
       border: '1px solid #999',
       color: '#666',
       position: 'absolute',
-      bottom: 40,
+      top: -20,
       left: this.props.leftAlign,
       fontSize: 20,
       overflow: 'scroll'
