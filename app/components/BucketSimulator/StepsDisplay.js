@@ -6,7 +6,7 @@ class StepsDisplay extends React.Component {
   }
   render(){
     const stepsDisplayStyle = {
-      height: 180,
+      height: 220,
       border: '1px solid #999',
       color: '#666',
       position: 'absolute',

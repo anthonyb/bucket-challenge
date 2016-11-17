@@ -46,6 +46,11 @@ class SimulationForm extends React.Component {
       marginTop: 20
     }
 
+    const inputStyle = {
+      textAlign:'center',
+      fontSize:22
+    }
+
     return (
       <form>
         <div className="row">
@@ -53,6 +58,7 @@ class SimulationForm extends React.Component {
             <label>Big Bucket Capacity</label>
             <div className="input-group input-group-lg">
               <input
+                style={inputStyle}
                 className="form-control"
                 type="text"
                 value={this.props.bigBucketSize}
@@ -65,6 +71,7 @@ class SimulationForm extends React.Component {
             <label>Small Bucket Capacity</label>
             <div className="input-group input-group-lg">
               <input
+                style={inputStyle}
                 className="form-control"
                 type="text"
                 value={this.props.smallBucketSize}
@@ -77,6 +84,7 @@ class SimulationForm extends React.Component {
             <label>Target Amount</label>
             <div className="input-group input-group-lg">
               <input
+                style={inputStyle}
                 className="form-control"
                 type="text"
                 value={this.props.targetAmount}
